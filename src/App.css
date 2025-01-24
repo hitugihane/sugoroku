@@ -1,54 +1,51 @@
-.App {
-  text-align: center;
-  padding: 20px;
-}
-
 .board {
-  position: relative;
+  position: relative;  /* ボード全体の親要素に relative を設定 */
   width: 1000px;
   height: 1000px;
   margin: 20px auto;
-  border: 2px solid black;
-  position: relative;
-  margin-bottom: 20px;
 }
 
 .player {
+  position: absolute; /* プレイヤーを絶対位置で配置 */
   width: 10px;
   height: 10px;
-  background-color: red;
+  background-color: red;  /* プレイヤーの色 */
+  border-radius: 50%; /* プレイヤーを丸くする */
+  z-index: 2;  /* プレイヤーが他の要素より前に表示されるように */
+}
+
+.cell {
+  width: 10px;
+  height: 10px;
+  border: 1px solid lightgray;
   position: absolute;
 }
 
-.controls {
-  margin-top: 20px;
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-}
-
-button {
-  padding: 10px;
-  margin: 5px;
-  font-size: 16px;
-  cursor: pointer;
-}
-
-/* 矢印ボタンのスタイル */
 .arrows {
-  display: flex;
-  justify-content: center;
-  position: absolute; /* ボードの上に表示 */
-  top: 50%; /* 中央に配置 */
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 1; /* ボードの上に表示 */
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  z-index: 3;
 }
 
 .arrow {
-  padding: 10px;
-  font-size: 20px;
+  font-size: 30px;
   cursor: pointer;
   margin: 5px;
 }
 
+.arrow.up {
+  transform: rotate(0deg);
+}
+
+.arrow.down {
+  transform: rotate(180deg);
+}
+
+.arrow.left {
+  transform: rotate(270deg);
+}
+
+.arrow.right {
+  transform: rotate(90deg);
+}

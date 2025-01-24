@@ -1,18 +1,28 @@
 import React, { useState } from 'react';
 import './App.css';
 
-const gridSize = 100;
+const gridSize = 100;  // ボードのサイズ
+const eventSpaces = []; // イベントマスの配列
+
+// ランダムにイベントマスを配置
+for (let i = 0; i < 10; i++) {  // ここで10個のイベントマスを作成
+  const randomPosition = Math.floor(Math.random() * gridSize * gridSize);
+  eventSpaces.push(randomPosition);
+}
 
 const App = () => {
   const [playerPosition, setPlayerPosition] = useState({ x: 0, y: 0 });
   const [diceRoll, setDiceRoll] = useState(0);
   const [isMoving, setIsMoving] = useState(false);
+  const [cards, setCards] = useState([]);  // プレイヤーのカードを管理
+  const [message, setMessage] = useState("");  // メッセージ表示用
 
   const rollDice = () => {
     if (isMoving) return;
     const roll = Math.floor(Math.random() * 6) + 1;
     setDiceRoll(roll);
     setIsMoving(true);
+    setMessage("");  // サイコロを振るたびにメッセージをリセット
   };
 
   const movePlayer = (direction) => {
@@ -20,6 +30,7 @@ const App = () => {
 
     let newX = playerPosition.x;
     let newY = playerPosition.y;
+    let newPosition = playerPosition.x + playerPosition.y * gridSize; // プレイヤーの現在の位置を1Dに変換
 
     switch (direction) {
       case 'up':
@@ -38,6 +49,16 @@ const App = () => {
         break;
     }
 
+    // 新しい座標
+    newPosition = newX + newY * gridSize;
+
+    // イベントマスに止まったらカードをゲット
+    if (eventSpaces.includes(newPosition)) {
+      const newCard = `カード${Math.floor(Math.random() * 1000)}`;
+      setCards([...cards, newCard]);
+      setMessage(`イベントマス！ 新しいカードを手に入れました: ${newCard}`);
+    }
+
     setPlayerPosition({ x: newX, y: newY });
     setIsMoving(false);
   };
@@ -48,16 +69,26 @@ const App = () => {
       <div>
         <button onClick={rollDice}>サイコロを振る</button>
         <p>サイコロの目: {diceRoll}</p>
+        <p>{message}</p>
+        <div>
+          <h3>手に入れたカード:</h3>
+          <ul>
+            {cards.map((card, index) => (
+              <li key={index}>{card}</li>
+            ))}
+          </ul>
+        </div>
       </div>
 
       <div className="board">
         <div
           className="player"
           style={{
-            top: `${playerPosition.y * 10}px`,
-            left: `${playerPosition.x * 10}px`,
+            top: `${playerPosition.y * 10}px`,   // y軸
+            left: `${playerPosition.x * 10}px`,  // x軸
           }}
         ></div>
+
         {[...Array(gridSize)].map((_, y) =>
           [...Array(gridSize)].map((_, x) => (
             <div
@@ -70,6 +101,7 @@ const App = () => {
                 position: 'absolute',
                 top: `${y * 10}px`,
                 left: `${x * 10}px`,
+                backgroundColor: eventSpaces.includes(x + y * gridSize) ? 'yellow' : 'white',  // イベントマスを黄色に
               }}
             />
           ))
@@ -77,30 +109,10 @@ const App = () => {
 
         {isMoving && (
           <div className="arrows">
-            <span
-              onClick={() => movePlayer('up')}
-              className="arrow up"
-            >
-              ↑
-            </span>
-            <span
-              onClick={() => movePlayer('down')}
-              className="arrow down"
-            >
-              ↓
-            </span>
-            <span
-              onClick={() => movePlayer('left')}
-              className="arrow left"
-            >
-              ←
-            </span>
-            <span
-              onClick={() => movePlayer('right')}
-              className="arrow right"
-            >
-              →
-            </span>
+            <span onClick={() => movePlayer('up')} className="arrow up">↑</span>
+            <span onClick={() => movePlayer('down')} className="arrow down">↓</span>
+            <span onClick={() => movePlayer('left')} className="arrow left">←</span>
+            <span onClick={() => movePlayer('right')} className="arrow right">→</span>
           </div>
         )}
       </div>
